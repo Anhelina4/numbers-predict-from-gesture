@@ -63,7 +63,7 @@
   
         // assign a circle to each point
         for(var i in points) {
-            var c = new Circle(points[i], 2+Math.random()*2, 'rgba(255,255,255,0.3)');
+            var c = new Circle(points[i], 2+Math.random()*2, 'rgba(17, 89, 222,0.6)');
             points[i].circle = c;
         }
     }
@@ -172,7 +172,7 @@
             if(!_this.active) return;
             ctx.beginPath();
             ctx.arc(_this.pos.x, _this.pos.y, _this.radius, 0, 4 * Math.PI, false);
-            ctx.fillStyle = 'rgba(51, 162, 255 ,'+ _this.active+')';
+            ctx.fillStyle = 'rgba(17, 89, 222 ,'+ _this.active+')';
             ctx.fill();
         };
     }
