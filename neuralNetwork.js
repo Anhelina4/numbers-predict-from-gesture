@@ -22,10 +22,10 @@ function adjustVideoSize(width, height) {
 }
 
 /**
- * It takes a video stream from the webcam, and then it adds an event listener to the video element. 
- * 
- * The event listener waits for the video to load, and then it calls the adjustVideoSize function. 
- * 
+ * It takes a video stream from the webcam, and then it adds an event listener to the video element.
+ *
+ * The event listener waits for the video to load, and then it calls the adjustVideoSize function.
+ *
  * The adjustVideoSize function is defined in the next code block.
  * @returns A promise that resolves to a stream object.
  */
@@ -118,40 +118,61 @@ function encodeLabels(numClasses) {
 }
 
 async function train() {
-  ys = null
-  /* Creating a model with 3 layers. The first layer is a flatten layer, which takes the output of the
-  MobileNet model and flattens it into a vector. The second layer is a dense layer with 100 units,
-  and the third layer is a dense layer with 10 units. The last layer is the output layer, and it
-  uses a softmax activation function, which means it will return an array of 10 probability scores
-  (summing to 1). Each score will be the probability that the current image belongs to one of our 10
-  classes. */
-  encodeLabels(10)
-  model = tf.sequential({
-    layers: [
-      tf.layers.flatten({ inputShape: mobilenet.outputs[0].shape.slice(1) }),
-      tf.layers.dense({ units: 100, activation: 'relu' }),
-      tf.layers.dense({ units: 10, activation: 'softmax' })
-    ]
-  })
- /* Training the model. */
-  model.compile({
-    optimizer: tf.train.adam(0.0001),
-    loss: 'categoricalCrossentropy'
-  })
-  let loss = 0
-  model.fit(xs, ys, {
-    epochs: 10,
-    callbacks: {
-      onBatchEnd: async (batch, logs) => {
-        loss = logs.loss.toFixed(5)
-        console.log('LOSS: ' + loss)
+  try {
+    ys = null
+    /* Creating a model with 3 layers. The first layer is a flatten layer, which takes the output of the
+        MobileNet model and flattens it into a vector. The second layer is a dense layer with 100 units,
+        and the third layer is a dense layer with 10 units. The last layer is the output layer, and it
+        uses a softmax activation function, which means it will return an array of 10 probability scores
+        (summing to 1). Each score will be the probability that the current image belongs to one of our 10
+        classes. */
+    console.log('mobilenet-out', mobilenet.outputs[0])
+    encodeLabels(10)
+    model = tf.sequential({
+      layers: [
+        tf.layers.flatten({
+          inputShape: mobilenet?.outputs[0]?.shape?.slice(1)
+        }),
+        tf.layers.dense({ units: 100, activation: 'relu' }),
+        tf.layers.dense({ units: 10, activation: 'softmax' })
+      ]
+    })
+    /* Training the model. */
+    model.compile({
+      optimizer: tf.train.adam(0.0001),
+      loss: 'categoricalCrossentropy'
+    })
+    let loss = 0
+    model.fit(xs, ys, {
+      epochs: 10,
+      callbacks: {
+        onBatchEnd: async (batch, logs) => {
+          loss = logs.loss.toFixed(5)
+          console.log('LOSS: ' + loss)
+        }
       }
-    }
-  })
+    })
+  } catch (err) {
+    console.log(err)
+  }
 }
+
 function doTraining() {
-  train()
-  alert('Training Done!')
+  if (labels.length !== 0) {
+    train()
+    $('#alert-success').addClass('show')
+    $('#alert-error').removeClass('show')
+    setTimeout(() => {
+      $('#alert').removeClass('show')
+    }, 3000)
+  } else {
+    console.log('click')
+    $('#alert-error').addClass('show')
+    $('#alert-success').removeClass('show')
+    setTimeout(() => {
+      $('#alert-error').removeClass('show')
+    }, 3000)
+  }
 }
 
 /**

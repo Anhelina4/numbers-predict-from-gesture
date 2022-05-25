@@ -11,7 +11,20 @@
         <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400&display=swap" rel="stylesheet">
     </head>
     <body>
+       
         <div class="modal" id="myModal" tabindex="-1" role="dialog" data-show="true" data-keyboard="false" data-backdrop="static">
+            <div class="alert alert-primary alert-dismissible fade hide fixed-alert" role="alert" id="alert-error">
+                Please, train the model to proceed
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+            <div class="alert alert-primary alert-dismissible fade hide fixed-alert" role="alert" id="alert-success">
+                The model is trained!
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
             <div class="modal-dialog modal-dialog-centered" style="min-width:800px; ">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -46,48 +59,50 @@
                             </div>
                         </div>
                     </div>
-                    <div class="container-fluid mb-md" style="margin-bottom:40px;">
-                        <div class="row mb-md">
-                            <div class="col-md-6 ml-auto align-center direction-row">
+                    <div class="container-fluid mb-md" style="margin-bottom:40px; padding:40px;">
+                        <div class="row mb-md ">
+                            <div class="col-md-2 ml-auto align-center direction-row">
                                 <button type="button" id="0" class="btn btn-outline-secondary btn-lg" onclick="handleButton(this)">0</button>
-                                <li class="list-group-item d-flex  align-items-center" style="margin-right:28px;">
+                                <li class="list-group-item d-flex  align-items-center" style="margin-right:16px;">
                                     <span id="samples_0" class="badge  badge-pill">0</span>
                                 </li>
                             </div>
-                            <div class="col-md-6 ml-auto direction-row">
+                            <div class="col-md-2 ml-auto direction-row">
                                 <button type="button" id="1" class="btn btn-outline-secondary btn-lg" onclick="handleButton(this)">1</button>
                                 <li class="list-group-item d-flex  align-items-center" style="margin-right:28px;">
                                     <span id="samples_1" class="badge  badge-pill">0</span>
                                 </li>
                             </div>
-                        </div>
-                        <div class="row mb-md">
-                            <div class="col-md-6 ml-auto align-center direction-row">
+                            <div class="col-md-2 ml-auto align-center direction-row">
                                 <button type="button" id="2" class="btn btn-outline-secondary btn-lg" onclick="handleButton(this)">2</button>
                                 <li class="list-group-item d-flex  align-items-center" style="margin-right:28px;">
                                     <span id="samples_2" class="badge badge-pill">0</span>
                                 </li>
                             </div>
-                            <div class="col-md-6 ml-auto align-center direction-row">
+                            <div class="col-md-2 ml-auto align-center direction-row">
                                 <button type="button" id="3" class="btn btn-outline-secondary btn-lg" onclick="handleButton(this)">3</button>
                                 <li class="list-group-item d-flex  align-items-center" style="margin-right:28px;">
                                     <span id="samples_3" class="badge  badge-pill">0</span>
                                 </li>
                             </div>
-                        </div>
-                        <div class="row mb-md">
-                             <div class="col-md-6 ml-auto align-center direction-row">
+                            <div class="col-md-2 ml-auto align-center direction-row">
                                 <button type="button" id="4" class="btn btn-outline-secondary btn-lg" onclick="handleButton(this)">4</button>
                                 <li class="list-group-item d-flex  align-items-center" style="margin-right:28px;">
                                     <span id="samples_4" class="badge  badge-pill">0</span>
                                 </li>
                             </div>
-                             <div class="col-md-6 ml-auto align-center direction-row">
+                             <div class="col-md-2 ml-auto align-center direction-row">
                                 <button type="button" id="5" class="btn btn-outline-secondary btn-lg" onclick="handleButton(this)">5</button>
                                 <li class="list-group-item d-flex  align-items-center" style="margin-right:28px;">
                                     <span id="samples_5" class="badge  badge-pill">0</span>
                                 </li>
                             </div>
+                        </div>
+                        <div class="row mb-md">
+                            
+                        </div>
+                        <div class="row mb-md">
+                             
                         </div>
                     </div>
                     
