@@ -1,0 +1,122 @@
+<html>
+    <head>
+        <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+        <link rel="stylesheet" href="./overwriteClasses.css"></link>
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Koulen&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400&display=swap" rel="stylesheet">
+    </head>
+    <body>
+        <div class="modal" id="myModal" tabindex="-1" role="dialog" data-show="true" data-keyboard="false" data-backdrop="static">
+            <div class="modal-dialog modal-dialog-centered" style="min-width:800px; ">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title align-center">Number recognition from gestures</h5>
+                    </div>
+                    <div class="modal-body" style="margin-bottom:28px;">
+                    	<div class="row">
+                            <div class="col-md-6 ml-auto align-center">
+                                <div class="align-center">
+		                            <div class="center-inside ">
+		                                <video autoplay playsinline muted id="camera" width="360px" height="250px"></video>
+		                            </div>
+		                        </div>
+                            </div>
+                            <div class="col-md-6 ml-auto align-center" style="height:250px; width:360px;">
+                            	<div class="align-center" style="height:inherit; width:inherit;">
+		                            <div class="center-inside " style="height:inherit; width:inherit;">
+                                 		<span class="badge badge-primary prediction-span d-flex" style="height:inherit; width:inherit; font-size:100px;" id="prediction">0</span>
+                                 	</div>
+		                        </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="container-fluid" style="margin-bottom:40px;">
+                        <div class="row">
+                            <div class="col-md-12 ml-auto">
+                                <div class="align-center ">
+                                    <div class="center-inside d-flex">
+                                        <div class="text-font text-center"><span>In order to train your model - make a gesture which reflects a number and press related button</span></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="container-fluid mb-md" style="margin-bottom:40px;">
+                        <div class="row mb-md">
+                            <div class="col-md-6 ml-auto align-center direction-row">
+                                <button type="button" id="0" class="btn btn-outline-secondary btn-lg" onclick="handleButton(this)">0</button>
+                                <li class="list-group-item d-flex  align-items-center" style="margin-right:28px;">
+                                    <span id="samples_0" class="badge  badge-pill">0</span>
+                                </li>
+                            </div>
+                            <div class="col-md-6 ml-auto direction-row">
+                                <button type="button" id="1" class="btn btn-outline-secondary btn-lg" onclick="handleButton(this)">1</button>
+                                <li class="list-group-item d-flex  align-items-center" style="margin-right:28px;">
+                                    <span id="samples_1" class="badge  badge-pill">0</span>
+                                </li>
+                            </div>
+                        </div>
+                        <div class="row mb-md">
+                            <div class="col-md-6 ml-auto align-center direction-row">
+                                <button type="button" id="2" class="btn btn-outline-secondary btn-lg" onclick="handleButton(this)">2</button>
+                                <li class="list-group-item d-flex  align-items-center" style="margin-right:28px;">
+                                    <span id="samples_2" class="badge badge-pill">0</span>
+                                </li>
+                            </div>
+                            <div class="col-md-6 ml-auto align-center direction-row">
+                                <button type="button" id="3" class="btn btn-outline-secondary btn-lg" onclick="handleButton(this)">3</button>
+                                <li class="list-group-item d-flex  align-items-center" style="margin-right:28px;">
+                                    <span id="samples_3" class="badge  badge-pill">0</span>
+                                </li>
+                            </div>
+                        </div>
+                        <div class="row mb-md">
+                             <div class="col-md-6 ml-auto align-center direction-row">
+                                <button type="button" id="4" class="btn btn-outline-secondary btn-lg" onclick="handleButton(this)">4</button>
+                                <li class="list-group-item d-flex  align-items-center" style="margin-right:28px;">
+                                    <span id="samples_4" class="badge  badge-pill">0</span>
+                                </li>
+                            </div>
+                             <div class="col-md-6 ml-auto align-center direction-row">
+                                <button type="button" id="5" class="btn btn-outline-secondary btn-lg" onclick="handleButton(this)">5</button>
+                                <li class="list-group-item d-flex  align-items-center" style="margin-right:28px;">
+                                    <span id="samples_5" class="badge  badge-pill">0</span>
+                                </li>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="modal-footer">
+                        <div class="align-center">
+                            <div class="row">
+                                <div class="col-4">
+                                    <button type="button" style="width:164px;" class="btn btn-outline-primary btn-lg" id="train" onclick="doTraining()">Train</button>
+                                </div>
+                                <div class="col-4">
+                                    <button type="button" style="width:164px;" class="btn btn-outline-warning btn-lg" id="startPredicting" onclick="setPredicting(true)">Start Predicting</button>
+                                </div>
+                                <div class="col-4">
+                                    <button type="button" style="width:164px;" class="btn btn-outline-warning btn-lg" id="stopPredicting" onclick="setPredicting(false)">Stop Predicting</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    </body>
+    <script src="neuralNetwork.js"></script>
+    <script>
+        $(window).on('load',function(){
+            setTimeout(function(){
+                $('#myModal').modal('show');
+            }, 10);
+        });
+    </script>
+</html>
