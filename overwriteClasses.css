@@ -60,7 +60,8 @@ html {
     border-radius: 8px;
   }
   video {
-    border-radius: 8px;
+    height:250px;
+    width:360px;
   }
   .btn-outline-secondary {
       white-space: nowrap;
@@ -69,6 +70,7 @@ html {
     border: 1px solid rgba(255, 255, 255, 0.637);
     padding: 4px 16px;
     min-width: 46px;
+    letter-spacing:2px;
   }
   .btn-outline-secondary:hover {
     background: rgba(255, 255, 255, 0.112);
@@ -92,6 +94,7 @@ html {
     box-shadow: unset;
   }
   .btn-outline-primary {
+    letter-spacing:2px;
       white-space: nowrap;
      text-align: center;
     color: rgb(170, 39, 137);
@@ -133,6 +136,7 @@ html {
     color: rgb(170, 39, 137);
   }
   .btn-outline-warning {
+    letter-spacing:2px;
       white-space: nowrap;
      text-align: center;
     border: 1px solid rgba(138, 117, 2, 0.804);
@@ -184,6 +188,7 @@ html {
   }
   .text-font {
     font-family: 'Poppins', sans-serif;
+    letter-spacing:1.4px;
   }
   .text-center {
     text-align: center;
@@ -194,5 +199,13 @@ html {
   }
   .badge {
     font-size: 16px;
+  }
+  .video-wrapper{
+      width:360px;
+      height:250px;
+      background:rgba(0, 0, 0, 0.458);
+      display:flex;
+      justify-content:center;
+      border-radius:8px;
   }
   
