@@ -6,8 +6,8 @@ body {
   font-family: 'Koulen', cursive;
   letter-spacing: 3px;
 }
-button.close:active{
-    border:none;
+button.close:active {
+  border: none;
 }
 .d-flex {
   display: 'flex';
@@ -40,19 +40,16 @@ button.close:active{
 }
 
 .modal {
-  background: url(https://miro.medium.com/max/1400/1*m2gDBT_nc-iE7R4AM3sHBQ.jpeg);
-  -webkit-background-size: cover;
-  -moz-background-size: cover;
-  -o-background-size: cover;
-  background-size: cover;
-  object-fit: cover;
-  background-repeat: no-repeat;
-  background-position: center;
   color: rgba(255, 255, 255, 0.834);
+  position: fixed;
+  top: 0%;
+  left: 50%;
+  transform: translate(-50%, 0%);
 }
 .modal-content {
-  background: rgba(0, 0, 0, 0);
-  backdrop-filter: blur(20px);
+  background: rgba(97, 97, 97, 0.149);
+
+  backdrop-filter: blur(8px);
   border: 3px solid grey;
   border-radius: 20px;
 }
@@ -229,6 +226,7 @@ video {
   color: white;
   border: none;
   font-size: 16px;
+  z-index: 100;
 }
 #alert-success {
   background: rgba(69, 232, 63, 0.434);
@@ -236,4 +234,5 @@ video {
   color: white;
   border: none;
   font-size: 16px;
+  z-index: 100;
 }
