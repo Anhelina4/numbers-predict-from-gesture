@@ -97,43 +97,42 @@ html {
     letter-spacing:2px;
       white-space: nowrap;
      text-align: center;
-    color: rgb(170, 39, 137);
-    border: 1px solid rgb(51, 0, 38);
+    color: rgb(37, 137, 236);
     padding: 4px 16px;
-    border-color: rgb(170, 39, 137);
+    border-color: rgb(37, 137, 236);
     min-width: 46px;
   }
   .btn-outline-primary:hover {
-    background: rgba(209, 27, 163, 0.151);
-    border-color: rgb(170, 39, 137);
-    color: rgb(170, 39, 137);
+    background: rgba(37, 136, 236, 0.222);
+    border-color: rgb(37, 137, 236);
+    color: rgb(37, 137, 236);
   }
   .btn-outline-primary:active {
-    background-color: rgba(155, 3, 117, 0.226);
-    border-color: rgb(170, 39, 137);
+    background-color: rgba(37, 136, 236, 0.222);
+    border-color: rgb(37, 137, 236);
     box-shadow: unset;
-    color: rgb(170, 39, 137);
+    color: rgb(37, 137, 236);
   }
   .btn-outline-primary:focus {
-    background-color: rgba(155, 3, 117, 0.226);
-    border-color: rgb(170, 39, 137);
+    background-color: rgba(37, 136, 236, 0.222);
+    border-color: rgb(37, 137, 236);
     box-shadow: unset;
-    color: rgb(170, 39, 137);
+    color: rgb(37, 137, 236);
   }
   .btn-outline-primary:not(:disabled):not(.disabled).active,
   .btn-outline-primary:not(:disabled):not(.disabled):active,
   .show > .btn-outline-primary.dropdown-toggle {
-    background-color: rgba(155, 3, 117, 0.226);
-    border-color: rgb(170, 39, 137);
+    background-color: rgba(37, 136, 236, 0.222);
+    border-color: rgb(37, 137, 236);
     box-shadow: unset;
-    color: rgb(170, 39, 137);
+    color: rgb(37, 137, 236);
   }
   .btn-outline-primary:not(:disabled):not(.disabled).active:focus,
   .btn-outline-primary:not(:disabled):not(.disabled):active:focus,
   .show > .btn-outline-primary.dropdown-toggle:focus {
     box-shadow: unset;
-    border: 3px solid rgb(128, 128, 128 / 50%);
-    color: rgb(170, 39, 137);
+    border: 3px solid rgb(37, 137, 236 / 50%);
+    color: rgb(37, 137, 236);;
   }
   .btn-outline-warning {
     letter-spacing:2px;
