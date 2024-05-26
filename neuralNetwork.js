@@ -5,8 +5,12 @@ let trainYs
 let mobilenet
 let model
 let array = Array.from(Array(10), () => 0)
+let arrayTest = Array.from(Array(10), () => 0)
 let isPredicting = false
-
+// Додайте окремі масиви для тестових даних
+let testLabels = [];
+let testXs;
+let testYs;
 /**
  * If the video is wider than it is tall, adjust the width to match the height, and vice versa
  * @param width - The width of the video stream.
@@ -117,6 +121,22 @@ function encodeLabels(numClasses) {
   }
 }
 
+function encodeTestLabels(numClasses) {
+  for (let i = 0; i < testLabels.length; i++) {
+    const y = tf.tidy(() => {
+      return tf.oneHot(tf.tensor1d([testLabels[i]]).toInt(), numClasses)
+    })
+    if (testYs == null) {
+      testYs = tf.keep(y)
+    } else {
+      const oldY = testYs
+      testYs = tf.keep(oldY.concat(y, 0))
+      oldY.dispose()
+      y.dispose()
+    }
+  }
+}
+
 async function train() {
   try {
     trainYs = null
@@ -126,8 +146,9 @@ async function train() {
         uses a softmax activation function, which means it will return an array of 10 probability scores
         (summing to 1). Each score will be the probability that the current image belongs to one of our 10
         classes. */
-    console.log('mobilenet-out', mobilenet.outputs[0])
+    // console.log('mobilenet-out', mobilenet.outputs[0])
     encodeLabels(10)
+    encodeTestLabels(10)
     model = tf.sequential({
       layers: [
         tf.layers.flatten({
@@ -152,6 +173,7 @@ async function train() {
         }
       }
     })
+    evaluateModel()
   } catch (err) {
     console.log(err)
   }
@@ -160,13 +182,15 @@ async function train() {
 function doTraining() {
   if (trainLabels.length !== 0) {
     train()
+    // console.log("textXs", testXs)
+    // console.log("textYs", testYs)
     $('#alert-success').addClass('show')
     $('#alert-error').removeClass('show')
     setTimeout(() => {
       $('#alert').removeClass('show')
     }, 3000)
   } else {
-    console.log('click')
+    // console.log('click')
     $('#alert-error').addClass('show')
     $('#alert-success').removeClass('show')
     setTimeout(() => {
@@ -190,18 +214,119 @@ function addExample(example, label) {
   }
   trainLabels.push(label)
 }
+function addTestExample(example, label) {
+  if (testXs == null) {
+    testXs = tf.keep(example)
+  } else {
+    const oldX = testXs
+    testXs = tf.keep(oldX.concat(example, 0))
+    oldX.dispose()
+  }
+  testLabels.push(label)
+}
+
+//--------------------------------------------------------------------EVALUATE_START
+async function buildConfusionMatrix() {
+  const predictions = model.predict(testXs);
+  const predictedClasses = predictions.argMax(-1).dataSync();
+  const trueClasses = testYs.argMax(-1).dataSync();
+
+  const numClasses = 6; // Змініть це на відповідне значення для вашої задачі
+
+  const confusionMatrix = Array.from(Array(numClasses), () => Array(numClasses).fill(0));
+
+  for (let i = 0; i < trueClasses.length; i++) {
+      const trueClass = trueClasses[i];
+      const predictedClass = predictedClasses[i];
+      confusionMatrix[trueClass][predictedClass]++;
+  }
+
+  console.table(confusionMatrix);
+}
+
+// Calculate accuracy
+async function calculateAccuracy(trueClasses, predictedClasses) {
+  const accuracyTensor = tf.equal(trueClasses, predictedClasses).sum().div(trueClasses.shape[0])
+  const accuracy = await accuracyTensor.data()
+  accuracyTensor.dispose()
+  return accuracy
+}
+
+// Calculate precision and recall
+function calculatePrecisionRecall(trueClasses, predictedClasses) {
+  const truePositive = tf.logicalAnd(tf.equal(trueClasses, 1), tf.equal(predictedClasses, 1)).sum().dataSync()[0]
+  const predictedPositive = tf.equal(predictedClasses, 1).sum().dataSync()[0]
+  const actualPositive = tf.equal(trueClasses, 1).sum().dataSync()[0]
+
+  const precision = truePositive / predictedPositive
+  const recall = truePositive / actualPositive
+
+  return { precision, recall }
+}
+
+// Функція для оцінки моделі
+async function evaluateModel() {
+  try {
+    // Здійснюємо передбачення на тестових даних
+    const predictions = model?.predict(testXs);
+    const predictedClasses = predictions.argMax(-1);
+    // console.log("predictedClasses", predictedClasses)
+    const trueClasses = testYs?.argMax(-1);
+  
+    // Розраховуємо точність
+    const accuracy = await calculateAccuracy(trueClasses, predictedClasses);
+    console.log(`Accuracy: ${accuracy}`);
+  
+    // Розраховуємо precision та recall
+    const { precision, recall } = calculatePrecisionRecall(trueClasses, predictedClasses);
+    console.log(`Precision: ${precision}`);
+    console.log(`Recall: ${recall}`);
+    
+    // Викликаємо функцію для побудови матриці сплутувань
+    buildConfusionMatrix();
+    console.log("---------------------------------------")
+    
+    predictions.dispose();
+    predictedClasses.dispose();
+    trueClasses.dispose();
+  
+  } catch (err) {
+    console.log(err)
+  }
+}
+
+
+// Функція для додавання прикладів для тестування
+function handleTestButton(elem) {
+  let count = 0
+  const handle = () => {
+    let label = parseInt(elem.id.split("_")[1])
+    arrayTest[label]++
+    document.getElementById('samples_' + elem.id).innerText = '' + arrayTest[label]
+    const img = capture()
+    addTestExample(mobilenet.predict(img), label)
+  }
+  const interval = setInterval(() => {
+    handle()
+    count++
+    if (count >= 20) {
+      clearInterval(interval)
+    }
+  }, 10)
+}
+
+//--------------------------------------------------------------------EVALUATE_END
 
 /**
  * It takes a button element as an argument, and when the button is clicked, it will take 10 samples of
  * the webcam image, and add them to the training data
  * @param elem - the button that was clicked
  */
-function handleButton(elem) {
+function handleTrainButton(elem) {
   let count = 0
-  console.log("elem", elem)
   const handle = () => {
     let label = parseInt(elem.id.split("_")[1])
-    console.log("label", label)
+    // console.log("label", label)
     array[label]++
     document.getElementById('samples_' + elem.id).innerText = '' + array[label]
     const img = capture()
