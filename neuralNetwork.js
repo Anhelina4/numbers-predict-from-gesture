@@ -168,12 +168,19 @@ async function train() {
       epochs: 10,
       callbacks: {
         onBatchEnd: async (batch, logs) => {
-          loss = logs.loss.toFixed(5)
+          // console.log("logs", logs)
+          // loss = logs.loss.toFixed(5)
           // console.log('LOSS: ' + loss)
+          
+        },
+        onTrainEnd: async (batch, logs) => {
+          console.log("logs", logs)
+          // loss = logs.loss.toFixed(5)
+          // console.log('LOSS: ' + loss)
+          await evaluateModel();
         }
       }
     })
-    evaluateModel()
   } catch (err) {
     console.log(err)
   }
@@ -226,52 +233,52 @@ function addTestExample(example, label) {
 }
 
 //--------------------------------------------------------------------EVALUATE_START
+// Calculate accuracy
+async function calculateAccuracy(trueClasses, predictedClasses) {
+  const accuracyTensor = tf.equal(trueClasses, predictedClasses).sum().div(trueClasses.shape[0]);
+  const accuracy = await accuracyTensor.data();
+  accuracyTensor.dispose();
+  return accuracy[0]; // Отримати значення з одновимірного тензора
+}
+
+// Calculate precision and recall
+function calculatePrecisionRecall(trueClasses, predictedClasses) {
+  const truePositive = tf.logicalAnd(tf.equal(trueClasses, 1), tf.equal(predictedClasses, 1)).sum().dataSync()[0];
+  const predictedPositive = tf.equal(predictedClasses, 1).sum().dataSync()[0];
+  const actualPositive = tf.equal(trueClasses, 1).sum().dataSync()[0];
+
+  const precision = truePositive / predictedPositive;
+  const recall = truePositive / actualPositive;
+
+  return { precision, recall };
+}
+
 async function buildConfusionMatrix() {
   const predictions = model.predict(testXs);
   const predictedClasses = predictions.argMax(-1).dataSync();
   const trueClasses = testYs.argMax(-1).dataSync();
 
-  const numClasses = 6; // Змініть це на відповідне значення для вашої задачі
+  const numClasses = 10; // Змініть це на відповідне значення для вашої задачі
 
   const confusionMatrix = Array.from(Array(numClasses), () => Array(numClasses).fill(0));
 
   for (let i = 0; i < trueClasses.length; i++) {
-      const trueClass = trueClasses[i];
-      const predictedClass = predictedClasses[i];
-      confusionMatrix[trueClass][predictedClass]++;
+    const trueClass = trueClasses[i];
+    const predictedClass = predictedClasses[i];
+    confusionMatrix[trueClass][predictedClass]++;
   }
 
   console.table(confusionMatrix);
-}
-
-// Calculate accuracy
-async function calculateAccuracy(trueClasses, predictedClasses) {
-  const accuracyTensor = tf.equal(trueClasses, predictedClasses).sum().div(trueClasses.shape[0])
-  const accuracy = await accuracyTensor.data()
-  accuracyTensor.dispose()
-  return accuracy
-}
-
-// Calculate precision and recall
-function calculatePrecisionRecall(trueClasses, predictedClasses) {
-  const truePositive = tf.logicalAnd(tf.equal(trueClasses, 1), tf.equal(predictedClasses, 1)).sum().dataSync()[0]
-  const predictedPositive = tf.equal(predictedClasses, 1).sum().dataSync()[0]
-  const actualPositive = tf.equal(trueClasses, 1).sum().dataSync()[0]
-
-  const precision = truePositive / predictedPositive
-  const recall = truePositive / actualPositive
-
-  return { precision, recall }
 }
 
 // Функція для оцінки моделі
 async function evaluateModel() {
   try {
     // Здійснюємо передбачення на тестових даних
-    const predictions = model?.predict(testXs);
+    const predictions = model.predict(testXs);
     const predictedClasses = predictions.argMax(-1);
     // console.log("predictedClasses", predictedClasses)
-    const trueClasses = testYs?.argMax(-1);
+    const trueClasses = testYs.argMax(-1);
   
     // Розраховуємо точність
     const accuracy = await calculateAccuracy(trueClasses, predictedClasses);
@@ -335,7 +342,7 @@ function handleTrainButton(elem) {
   const interval = setInterval(() => {
     handle()
     count++
-    if (count >= 10) {
+    if (count >= 20) {
       clearInterval(interval)
     }
   }, 10)
