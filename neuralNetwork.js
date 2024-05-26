@@ -1,7 +1,7 @@
 let webcamElement = document.getElementById('camera')
-let labels = []
-let xs
-let ys
+let trainLabels = []
+let trainXs
+let trainYs
 let mobilenet
 let model
 let array = Array.from(Array(10), () => 0)
@@ -98,19 +98,19 @@ function capture() {
 }
 
 /**
- * It takes the labels array and converts it into a one-hot encoded tensor.
+ * It takes the trainLabels array and converts it into a one-hot encoded tensor.
  * @param numClasses - number of classes in the dataset
  */
 function encodeLabels(numClasses) {
-  for (let i = 0; i < labels.length; i++) {
+  for (let i = 0; i < trainLabels.length; i++) {
     const y = tf.tidy(() => {
-      return tf.oneHot(tf.tensor1d([labels[i]]).toInt(), numClasses)
+      return tf.oneHot(tf.tensor1d([trainLabels[i]]).toInt(), numClasses)
     })
-    if (ys == null) {
-      ys = tf.keep(y)
+    if (trainYs == null) {
+      trainYs = tf.keep(y)
     } else {
-      const oldY = ys
-      ys = tf.keep(oldY.concat(y, 0))
+      const oldY = trainYs
+      trainYs = tf.keep(oldY.concat(y, 0))
       oldY.dispose()
       y.dispose()
     }
@@ -119,7 +119,7 @@ function encodeLabels(numClasses) {
 
 async function train() {
   try {
-    ys = null
+    trainYs = null
     /* Creating a model with 3 layers. The first layer is a flatten layer, which takes the output of the
         MobileNet model and flattens it into a vector. The second layer is a dense layer with 100 units,
         and the third layer is a dense layer with 10 units. The last layer is the output layer, and it
@@ -143,12 +143,12 @@ async function train() {
       loss: 'categoricalCrossentropy'
     })
     let loss = 0
-    model.fit(xs, ys, {
+    model.fit(trainXs, trainYs, {
       epochs: 10,
       callbacks: {
         onBatchEnd: async (batch, logs) => {
           loss = logs.loss.toFixed(5)
-          console.log('LOSS: ' + loss)
+          // console.log('LOSS: ' + loss)
         }
       }
     })
@@ -158,7 +158,7 @@ async function train() {
 }
 
 function doTraining() {
-  if (labels.length !== 0) {
+  if (trainLabels.length !== 0) {
     train()
     $('#alert-success').addClass('show')
     $('#alert-error').removeClass('show')
@@ -181,14 +181,14 @@ function doTraining() {
  * @param label - The label for the example.
  */
 function addExample(example, label) {
-  if (xs == null) {
-    xs = tf.keep(example)
+  if (trainXs == null) {
+    trainXs = tf.keep(example)
   } else {
-    const oldX = xs
-    xs = tf.keep(oldX.concat(example, 0))
+    const oldX = trainXs
+    trainXs = tf.keep(oldX.concat(example, 0))
     oldX.dispose()
   }
-  labels.push(label)
+  trainLabels.push(label)
 }
 
 /**
@@ -198,8 +198,10 @@ function addExample(example, label) {
  */
 function handleButton(elem) {
   let count = 0
+  console.log("elem", elem)
   const handle = () => {
-    let label = parseInt(elem.id)
+    let label = parseInt(elem.id.split("_")[1])
+    console.log("label", label)
     array[label]++
     document.getElementById('samples_' + elem.id).innerText = '' + array[label]
     const img = capture()
